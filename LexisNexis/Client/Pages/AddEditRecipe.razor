@@ -1,0 +1,190 @@
+﻿@page "/addeditrecipe"
+@page "/addeditrecipe/{id:int}"
+@inject HttpClient httpClient
+@inject NavigationManager navManager
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            @if (Id is null)
+            {
+                <h3>Add New Recipe</h3>
+            }
+            else
+            {
+                <h3>Edit Recipe</h3>
+            }
+        </div>
+    </div>
+
+    <EditForm Model="@recipe">
+        <div class="row">
+            <div class="col-2 text-end">
+                <label for="title" class="control-label">Title</label>
+            </div>
+            <div class="col-6">
+                <InputText id="title" @bind-Value="recipe.Title" class="form-control" />
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-2 text-end">
+                <label for="title" class="control-label">Description</label>
+            </div>
+            <div class="col-6">
+                <InputTextArea id="description" @bind-Value="recipe.Description" rows="5" class="form-control" />
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-2 text-end">
+                <label for="ingredients" class="control-label">Ingredients</label>
+            </div>
+            <div class="col-6 border">
+                @if (recipe.RecipeIngredients is not null && recipe.RecipeIngredients.Count > 0)
+                {
+                    @foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
+                    {
+                        <div class="row">
+                            <div class="col-8">
+                                @ingredient.Ingredient
+                            </div>
+                            <div class="col-3">
+                                <button @onclick="(() => RemoveIngredient(ingredient.RecipeIngredientId))" class="btn btn-sm btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <span style="color:red;">No ingredients added.</span>
+                }
+            </div>
+            <div class="col-3">
+                <button @onclick="(() => AddIngredient())" class="btn btn-sm btn-primary">Add Ingredient</button>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-2 text-end">
+                <label for="instructions" class="control-label">Instructions</label>
+            </div>
+            <div class="col-6 border">
+                @if (recipe.RecipeInstructions is not null && recipe.RecipeInstructions.Count > 0)
+                {
+                    <ul>
+                    @foreach (RecipeInstruction instruction in recipe.RecipeInstructions)
+                    {
+                        <div class="row pt-2">
+                            <div class="col-9">
+                                <li>@instruction.Instruction</li>
+                            </div>
+                            <div class="col-2">
+                                <button @onclick="(() => RemoveInstruction(instruction.RecipeInstructionId))" class="btn btn-sm btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    }
+                    </ul>
+                }
+                else
+                {
+                    <span style="color:red;">No instructions added.</span>
+                }
+            </div>
+            <div class="col-3">
+                <button @onclick="(() => AddInstruction())" class="btn btn-sm btn-primary">Add Instruction</button>
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-8 offset-2">
+                <button @onclick="SaveRecipe" class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Recipe recipe = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            var result = await httpClient.GetFromJsonAsync<Recipe>($"api/recipe/{Id}");
+            if (result is not null)
+            {
+                recipe = result;
+                if (recipe.RecipeIngredients is null)
+                {
+                    recipe.RecipeIngredients = new List<RecipeIngredient>();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            string errMsg = ex.Message;
+        }
+    }
+
+    /********************************************************
+     * Remove Ingredient
+    *********************************************************/
+    private void RemoveIngredient(int ingredientId)
+    {
+        try
+        {
+            var ingredient = recipe.RecipeIngredients.Where(i => i.RecipeIngredientId == ingredientId).FirstOrDefault();
+            recipe.RecipeIngredients.Remove(ingredient);
+        }
+
+        catch (Exception ex)
+        {
+            string errMsg = ex.Message;
+        }
+    }
+
+
+    /********************************************************
+     * Remove Instruction
+    *********************************************************/
+    private void RemoveInstruction(int instructionId)
+    {
+        try
+        {
+            var instruction = recipe.RecipeInstructions.Where(i => i.RecipeInstructionId == instructionId).FirstOrDefault();
+            recipe.RecipeInstructions.Remove(instruction);
+        }
+
+        catch (Exception ex)
+        {
+            string errMsg = ex.Message;
+        }
+    }
+
+    private void AddIngredient()
+    {
+
+    }
+
+    private void AddInstruction()
+    {
+
+    }
+
+    private async Task SaveRecipe()
+    {
+        if (Id is null)
+        {
+            await httpClient.PostAsJsonAsync("api/recipe", recipe);
+        }
+        else
+        {
+            RecipeIngredient ingredient = new();
+            ingredient.RecipeId = recipe.RecipeId;
+            ingredient.Ingredient = "gouda cheese";
+            recipe.RecipeIngredients.Add(ingredient);
+            await httpClient.PutAsJsonAsync($"api/recipe/{Id}", recipe);
+        }
+        navManager.NavigateTo("/recipes");
+    }
+}

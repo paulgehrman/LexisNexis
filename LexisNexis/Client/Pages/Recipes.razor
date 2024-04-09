@@ -1,0 +1,108 @@
+﻿@page "/recipes"
+@inject HttpClient httpClient
+@inject NavigationManager navManager
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <h3>All Recipes</h3>
+        </div>
+        <div class="col-6">
+            <button @onclick="AddRecipe" class="btn btn-success">Add Recipe</button>
+        </div>
+    </div>
+
+    @if (recipes is null)
+    {
+        <span>Loading recipes...</span>
+    }
+    else if (recipes.Count > 0)
+    {
+        <div class="row pt-2">
+            <div class="col-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Ingredients</th>
+                            <th>Instructions</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Recipe recipe in recipes)
+                        {
+                            <tr>
+                                <td>@recipe.Title</td>
+                                <td>@recipe.Description</td>
+                                <td>
+                                    <ul>
+                                        @foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
+                                        {
+                                            <li>@ingredient.Ingredient</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        @foreach (RecipeInstruction instruction in recipe.RecipeInstructions)
+                                        {
+                                            <li>@instruction.Instruction</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td><button @onclick="(() => EditRecipe(recipe.RecipeId))" class="btn btn-sm btn-primary">Edit</button></td>
+                                <td><button @onclick="(() => DeleteRecipe(recipe))" class="btn btn-sm btn-danger">Delete</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <span>No recipes found.</span>
+    }
+</div>
+
+@code {
+    List<Recipe>? recipes;
+
+    /*******************************************************
+     * On Initialized Async
+    ********************************************************/
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await httpClient.GetFromJsonAsync<List<Recipe>>("api/recipe");
+            if (result != null)
+            {
+                recipes = result;
+            }
+        }
+        catch (Exception ex)
+        {
+            string err = ex.Message;
+        }
+    }
+
+    private void AddRecipe()
+    {
+        navManager.NavigateTo("/addeditrecipe");
+    }
+
+    private void EditRecipe(int id)
+    {
+        navManager.NavigateTo($"/addeditrecipe/{id}");
+    }
+
+    private async Task DeleteRecipe(Recipe recipe)
+    {
+        await httpClient.DeleteAsync($"api/recipe/{recipe.RecipeId}");
+        recipes.Remove(recipe);
+    }
+}
