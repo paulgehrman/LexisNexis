@@ -1,0 +1,19 @@
+﻿@page "/test"
+
+@inject IJSRuntime jsRuntime
+
+<label id="accordion">hello</label>
+
+@code {
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+          //  await jsRuntime.InvokeVoidAsync("displayBorder");
+
+           // await jsRuntime.InvokeVoidAsync("slide");
+
+            await jsRuntime.InvokeVoidAsync("makeBold");
+        }
+    }
+}
