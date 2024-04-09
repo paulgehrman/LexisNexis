@@ -43,11 +43,11 @@
                 {
                     @foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
                     {
-                        <div class="row">
-                            <div class="col-8">
+                        <div class="row pt-2">
+                            <div class="col-9">
                                 @ingredient.Ingredient
                             </div>
-                            <div class="col-3">
+                            <div class="col-2">
                                 <button @onclick="(() => RemoveIngredient(ingredient.RecipeIngredientId))" class="btn btn-sm btn-danger">Remove</button>
                             </div>
                         </div>
@@ -143,7 +143,6 @@
         }
     }
 
-
     /********************************************************
      * Remove Instruction
     *********************************************************/
@@ -171,6 +170,9 @@
 
     }
 
+    /********************************************************
+     * Save Recipe
+    *********************************************************/
     private async Task SaveRecipe()
     {
         if (Id is null)
@@ -179,10 +181,10 @@
         }
         else
         {
-            RecipeIngredient ingredient = new();
-            ingredient.RecipeId = recipe.RecipeId;
-            ingredient.Ingredient = "gouda cheese";
-            recipe.RecipeIngredients.Add(ingredient);
+            // RecipeIngredient ingredient = new();
+            // ingredient.RecipeId = recipe.RecipeId;
+            // ingredient.Ingredient = "gouda cheese";
+            // recipe.RecipeIngredients.Add(ingredient);
             await httpClient.PutAsJsonAsync($"api/recipe/{Id}", recipe);
         }
         navManager.NavigateTo("/recipes");

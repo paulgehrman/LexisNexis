@@ -49,6 +49,7 @@ namespace LexisNexis.Server.Controllers
                 //  var recipe = await _context.Recipes.FindAsync(id);
 
                 var recipes = await _context.Recipes
+                   .Include(r => r.RecipeIngredients)
                    .Include(r => r.RecipeInstructions)
                    .ToListAsync();
 
