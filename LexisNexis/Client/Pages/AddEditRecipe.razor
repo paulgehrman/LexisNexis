@@ -2,6 +2,7 @@
 @page "/addeditrecipe/{id:int}"
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+@using LexisNexis.Client.Components;
 
 <div class="container">
     <div class="row">
@@ -105,7 +106,11 @@
     public int? Id { get; set; }
 
     private Recipe recipe = new();
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
+    /*********************************************************
+     * On Parameters Set Async
+    **********************************************************/
     protected override async Task OnParametersSetAsync()
     {
         try
@@ -160,11 +165,27 @@
         }
     }
 
-    private void AddIngredient()
+    /********************************************************
+     * Add Ingredient
+    *********************************************************/
+    private async Task AddIngredient()
     {
+        var modal = Modal.Show<AddIngredient>();
+        var result = await modal.Result;
 
+        if (result.Confirmed)
+        {
+            string ingredient = result.Data.ToString();
+            RecipeIngredient recipeIngredient = new();
+            recipeIngredient.Ingredient = ingredient;
+            recipeIngredient.RecipeId = recipe.RecipeId;
+            recipe.RecipeIngredients.Add(recipeIngredient);
+        }
     }
 
+    /********************************************************
+     * Add Instruction
+    *********************************************************/
     private void AddInstruction()
     {
 

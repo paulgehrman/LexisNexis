@@ -11,7 +11,7 @@ namespace LexisNexis.Shared.Models
         public int RecipeId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public ICollection<RecipeIngredient>? RecipeIngredients { get; set; }
-        public ICollection<RecipeInstruction>? RecipeInstructions { get; set; }
+        public List<RecipeIngredient>? RecipeIngredients { get; set; } = new();
+        public List<RecipeInstruction>? RecipeInstructions { get; set; } = new();
     }
 }

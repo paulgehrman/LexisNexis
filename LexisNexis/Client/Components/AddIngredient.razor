@@ -1,0 +1,43 @@
+﻿<div class="container">
+    <EditForm Model="@model" OnValidSubmit="SubmitForm">
+        <div class="row">
+            <div class="col-4 text-end">
+                <label for="ingredient">Ingredient</label>
+            </div>
+            <div class="col-8">
+                <InputText id="ingredient" @bind-Value="model.Ingredient" class="form-control" />
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-12 offset-4">
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                <button @onclick="Cancel" class="btn btn-sm btn-light">Cancel</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    private Model model = new();
+
+    /***********************************************
+     * On Initialized
+    ************************************************/
+    protected override void OnInitialized()
+    {
+        BlazoredModal.SetTitle("Enter an Ingredient");
+    }
+
+    private async Task SubmitForm() => await BlazoredModal.CloseAsync(ModalResult.Ok(model.Ingredient));
+    private async Task Cancel() => await BlazoredModal.CancelAsync();
+
+    /***********************************************
+     * Model
+    ************************************************/
+    private class Model
+    {
+        public string Ingredient { get; set; }
+    }
+}
