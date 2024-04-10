@@ -50,8 +50,15 @@
             <div class="col-2 text-end">
                 <label for="image" class="control-label">Image</label>
             </div>
-            <div class="col-6">
-            <InputFile OnChange="LoadFile" accept="@acceptedDocTypes" />
+            
+            @if (!String.IsNullOrEmpty(recipe.ImageName))
+            {
+                <div class="col-2">
+                <button @onclick="() => ViewFile(recipe)" class="btn btn-md btn-link pl-0 ml-0" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
+                </div>
+            }
+            <div class="col-4">
+                <InputFile OnChange="LoadFile" accept="@acceptedDocTypes" />
             </div>
         </div>
         <div class="row pt-2">
@@ -69,7 +76,8 @@
                             <li>@ingredient.Ingredient</li>
                     </div>
                     <div class="col-2">
-                        <button @onclick="(() => RemoveIngredient(ingredient.RecipeIngredientId))" class="btn btn-sm btn-danger">Remove</button>
+                                    @*  <button @onclick="(() => RemoveIngredient(ingredient.RecipeIngredientId))" class="btn btn-sm btn-danger">Remove</button> *@
+                        <button @onclick="() => RemoveIngredient(ingredient.RecipeIngredientId)" class="btn btn-sm btn-outline-danger" data-toggle="tooltip" title="Delete" style="margin-left:5px;"><img src="/images/trash.svg" height="16" alt="delete" /></button>
                     </div>
                 </div>
                         }
@@ -99,11 +107,12 @@
                     <li>@instruction.Instruction</li>
             </div>
             <div class="col-2">
-                <button @onclick="(() => RemoveInstruction(instruction.RecipeInstructionId))" class="btn btn-sm btn-danger">Remove</button>
+                                    @*  <button @onclick="(() => RemoveInstruction(instruction.RecipeInstructionId))" class="btn btn-sm btn-danger">Remove</button> *@
+                <button @onclick="() => RemoveIngredient(instruction.RecipeInstructionId)" class="btn btn-sm btn-outline-danger" data-toggle="tooltip" title="Delete" style="margin-left:5px;"><img src="/images/trash.svg" height="16" alt="delete" /></button>
             </div>
         </div>
                         }
-                                </ul>
+                                    </ul>
                 }
                 else
                 {
@@ -126,7 +135,7 @@
     [Parameter]
     public int? Id { get; set; }
 
-    [CascadingParameter] 
+    [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
 
     private Recipe recipe = new();
@@ -286,7 +295,7 @@
     {
         try
         {
-           // var selectedFile = e.File;
+            // var selectedFile = e.File;
 
             Stream stream = e.File.OpenReadStream(Convert.ToInt64(5242880));
             MemoryStream ms = new MemoryStream();
@@ -303,10 +312,28 @@
             ms.Close();
         }
 
-        catch(Exception ex)
+        catch (Exception ex)
         {
             string errMsg = ex.Message;
         }
+    }
 
+    /**************************************************************
+     * View File
+    **************************************************************/
+    public async Task ViewFile(Recipe recipe)
+    {
+        try
+        {
+            // var fileType = Utility.GetMimeType(uploadedFile.FileName);
+            // await jsRuntime.InvokeVoidAsync("jsOpenIntoNewTab", httpResult.Data, uploadedFile.FileType);
+
+            await jsRuntime.InvokeVoidAsync("openFileInNewTab", recipe.Image, Utility.GetMimeType(recipe.ImageName));
+        }
+
+        catch (Exception ex)
+        {
+            string errMsg = ex.Message;
+        }
     }
 }

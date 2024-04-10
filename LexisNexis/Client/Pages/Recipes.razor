@@ -2,6 +2,7 @@
 @inject HttpClient httpClient
 @inject NavigationManager navManager
 @inject IJSRuntime jsRuntime
+@using LexisNexis.Client.Components;
 
 <div class="container">
     <div class="row">
@@ -79,8 +80,14 @@
                                         }
                                     </ul>
                                 </td>
-                                <td><button @onclick="(() => EditRecipe(recipe.RecipeId))" class="btn btn-sm btn-primary">Edit</button></td>
-                                <td><button @onclick="(() => DeleteRecipe(recipe))" class="btn btn-sm btn-danger">Delete</button></td>
+                                <td>
+                                   @*  <button @onclick="(() => EditRecipe(recipe.RecipeId))" class="btn btn-sm btn-primary">Edit</button> *@
+                                    <button @onclick="() => EditRecipe(recipe.RecipeId)" class="btn btn-sm btn-outline-info" data-toggle="tooltip" title="Edit"><img src="/images/edit-icon.png" height="20" alt="edit" /></button>
+                                    </td>
+                                <td>
+                                @*     <button @onclick="(() => DeleteRecipe(recipe))" class="btn btn-sm btn-danger">Delete</button> *@
+                                    <button @onclick="() => DeleteRecipe(recipe)" class="btn btn-sm btn-outline-danger" data-toggle="tooltip" title="Delete" style="margin-left:5px;"><img src="/images/trash.svg" height="16" alt="delete" /></button>
+                                    </td>
                             </tr>
                         }
                     </tbody>
@@ -90,11 +97,14 @@
     }
     else
     {
-        <span>No recipes found.</span>
+        <span style="color:red;">No recipes found.</span>
     }
 </div>
 
 @code {
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
+
     List<Recipe>? allRecipes;
     List<Recipe>? recipes;
     Model model = new();
@@ -144,8 +154,14 @@
     ****************************************************/
     private async Task DeleteRecipe(Recipe recipe)
     {
-        await httpClient.DeleteAsync($"api/recipe/{recipe.RecipeId}");
-        recipes.Remove(recipe);
+        var modal = Modal.Show<DeleteConfirm>();
+        var result = await modal.Result;
+
+        if (result.Confirmed && result.Data.ToString() == "true")
+        {
+            await httpClient.DeleteAsync($"api/recipe/{recipe.RecipeId}");
+            recipes.Remove(recipe);
+        }
     }
 
     /***************************************************
