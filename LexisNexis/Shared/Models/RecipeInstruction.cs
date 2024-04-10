@@ -10,7 +10,12 @@ namespace LexisNexis.Shared.Models
     {
         public int RecipeInstructionId { get; set; }
         public int RecipeId { get; set; }
-        //public Recipe Recipe { get; set; }
         public string Instruction { get; set; }
+
+        public RecipeInstruction(int recipeId, string instruction)
+        {
+            this.RecipeId = recipeId;
+            this.Instruction = instruction;
+        }
     }
 }

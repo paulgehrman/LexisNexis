@@ -92,7 +92,7 @@ namespace LexisNexis.Server.Controllers
          * Update Recipe
         *******************************************************************/
         [HttpPut("{id}")]
-        public async Task<ActionResult<List<Recipe>>> UpdateRecipe(int id, Recipe recipe)
+        public async Task<ActionResult<bool>> UpdateRecipe(int id, Recipe recipe)
         {
             try
             {
@@ -118,7 +118,8 @@ namespace LexisNexis.Server.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return await GetAllRecipes();
+                //return await GetAllRecipes();
+                return true;
             }
             catch (Exception ex)
             {
@@ -130,7 +131,7 @@ namespace LexisNexis.Server.Controllers
          * Delete Recipe
         *******************************************************************/
         [HttpDelete("{id}")]
-        public async Task<ActionResult<List<Recipe>>> DeleteRecipe(int id)
+        public async Task<ActionResult<bool>> DeleteRecipe(int id)
         {
             try
             {
@@ -143,7 +144,8 @@ namespace LexisNexis.Server.Controllers
                 _context.Recipes.Remove(dbRecipe);
                 await _context.SaveChangesAsync();
 
-                return await GetAllRecipes();
+                //return await GetAllRecipes();
+                return true;
             }
             catch (Exception ex)
             {

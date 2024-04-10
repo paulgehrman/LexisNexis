@@ -227,9 +227,9 @@
         if (result.Confirmed && result.Data.ToString().Trim().Length > 0)
         {
             string ingredient = result.Data.ToString();
-            RecipeIngredient recipeIngredient = new();
-            recipeIngredient.Ingredient = ingredient;
-            recipeIngredient.RecipeId = recipe.RecipeId;
+            RecipeIngredient recipeIngredient = new(recipe.RecipeId, ingredient);
+            //recipeIngredient.Ingredient = ingredient;
+            //recipeIngredient.RecipeId = recipe.RecipeId;
             recipe.RecipeIngredients.Add(recipeIngredient);
         }
     }
@@ -245,9 +245,9 @@
         if (result.Confirmed)
         {
             string instruction = result.Data.ToString();
-            RecipeInstruction recipeInstruction = new();
-            recipeInstruction.Instruction = instruction;
-            recipeInstruction.RecipeId = recipe.RecipeId;
+            RecipeInstruction recipeInstruction = new(recipe.RecipeId, instruction);
+            //recipeInstruction.Instruction = instruction;
+            //recipeInstruction.RecipeId = recipe.RecipeId;
             recipe.RecipeInstructions.Add(recipeInstruction);
         }
     }
