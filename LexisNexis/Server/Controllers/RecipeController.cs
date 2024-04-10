@@ -104,13 +104,15 @@ namespace LexisNexis.Server.Controllers
                 var dbRecipe = recipes.Where(r => r.RecipeId == id).FirstOrDefault();
 
                 //var dbRecipe = await _context.Recipes.FindAsync(id);
-                //if (dbRecipe == null)
-                //{
-                //    return NotFound("This recipe does not exist.");
-                //}
+                if (dbRecipe == null)
+                {
+                    return NotFound("This recipe does not exist.");
+                }
 
                 dbRecipe.Title = recipe.Title;
                 dbRecipe.Description = recipe.Description;
+                dbRecipe.ImageName = recipe.ImageName;
+                dbRecipe.Image = recipe.Image;
                 dbRecipe.RecipeIngredients = recipe.RecipeIngredients;
                 dbRecipe.RecipeInstructions = recipe.RecipeInstructions;
 

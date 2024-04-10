@@ -51,7 +51,7 @@
                 <label for="image" class="control-label">Image</label>
             </div>
             <div class="col-6">
-            <InputFile accept="@acceptedDocTypes" />
+            <InputFile OnChange="LoadFile" accept="@acceptedDocTypes" />
             </div>
         </div>
         <div class="row pt-2">
@@ -126,7 +126,8 @@
     [Parameter]
     public int? Id { get; set; }
 
-    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] 
+    public IModalService Modal { get; set; } = default!;
 
     private Recipe recipe = new();
     private List<string> validationMsgs = new();
@@ -273,12 +274,39 @@
         }
         else
         {
-            // RecipeIngredient ingredient = new();
-            // ingredient.RecipeId = recipe.RecipeId;
-            // ingredient.Ingredient = "gouda cheese";
-            // recipe.RecipeIngredients.Add(ingredient);
             await httpClient.PutAsJsonAsync($"api/recipe/{Id}", recipe);
         }
         navManager.NavigateTo("/recipes");
+    }
+
+    /**********************************************************
+     * Load File
+    ***********************************************************/
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        try
+        {
+           // var selectedFile = e.File;
+
+            Stream stream = e.File.OpenReadStream(Convert.ToInt64(5242880));
+            MemoryStream ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            stream.Close();
+
+            //UploadedFile uploadedFile = new();
+            //uploadedFile.FileName = selectedFile.Name;
+            //uploadedFile.AzureContainer = String.Format("dependents");
+            //uploadedFile.FileContent = ms.ToArray();
+            recipe.Image = ms.ToArray();
+            recipe.ImageName = e.File.Name;
+
+            ms.Close();
+        }
+
+        catch(Exception ex)
+        {
+            string errMsg = ex.Message;
+        }
+
     }
 }

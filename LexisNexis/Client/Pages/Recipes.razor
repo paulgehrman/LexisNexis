@@ -44,6 +44,7 @@
                         <tr>
                             <th>Title</th>
                             <th>Description</th>
+                            <th>Image</th>
                             <th>Ingredients</th>
                             <th>Instructions</th>
                             <th></th>
@@ -56,6 +57,7 @@
                             <tr>
                                 <td>@recipe.Title</td>
                                 <td>@recipe.Description</td>
+                                <td>@recipe.ImageName</td>
                                 <td>
                                     <ul>
                                         @foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
@@ -146,6 +148,7 @@
     ****************************************************/
     private void Search()
     {
+        //TODO
         model.SearchString = model.SearchString.ToLower();
 
         List<Recipe> filteredRecipes = new();
