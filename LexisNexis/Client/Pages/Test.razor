@@ -4,6 +4,8 @@
 
 <label id="accordion">hello</label>
 
+<div id="box" style="background:#98bf21;height:100px;width:100px;position:absolute;"></div>
+
 @code {
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -13,7 +15,9 @@
 
            // await jsRuntime.InvokeVoidAsync("slide");
 
-            await jsRuntime.InvokeVoidAsync("makeBold");
+            //await jsRuntime.InvokeVoidAsync("makeBold");
+
+            await jsRuntime.InvokeVoidAsync("animate");
         }
     }
 }

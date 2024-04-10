@@ -4,10 +4,29 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-6">
-            <h3>All Recipes</h3>
+        <div class="col-4">
+            @if(viewAll)
+            {
+                <h3>All Recipes</h3>
+            }
+            else
+            {
+                <h3>Recipes</h3>
+            }
         </div>
-        <div class="col-6">
+        <div class="col-2 text-end">
+            <InputText @bind-Value="model.SearchString" class="form-control" />
+        </div>
+        <div class="col-1">
+            <button class="btn btn-sm btn-light" data-toggle="tooltip" title="Search" @onclick="() => Search()"><img src="/images/search-icon.png" height="20" alt="Search" /></button>
+        </div>
+        @if (!viewAll)
+        {
+            <div class="col-2">
+                <button class="btn btn-sm btn-link" @onclick="() => ViewAll()">View All Recipes</button>
+            </div>
+        }
+        <div class="col-2 text-end">
             <button @onclick="AddRecipe" class="btn btn-success">Add Recipe</button>
         </div>
     </div>
@@ -69,7 +88,10 @@
 </div>
 
 @code {
+    List<Recipe>? allRecipes;
     List<Recipe>? recipes;
+    Model model = new();
+    private bool viewAll;
 
     /*******************************************************
      * On Initialized Async
@@ -81,8 +103,12 @@
             var result = await httpClient.GetFromJsonAsync<List<Recipe>>("api/recipe");
             if (result != null)
             {
+                allRecipes = result;
                 recipes = result;
             }
+
+            viewAll = true;
+            model.SearchString = String.Empty;
         }
         catch (Exception ex)
         {
@@ -90,19 +116,86 @@
         }
     }
 
+    /***************************************************
+     * Add Recipe
+    ****************************************************/
     private void AddRecipe()
     {
         navManager.NavigateTo("/addeditrecipe");
     }
 
+    /***************************************************
+     * Edit Recipe
+    ****************************************************/
     private void EditRecipe(int id)
     {
         navManager.NavigateTo($"/addeditrecipe/{id}");
     }
 
+    /***************************************************
+     * Delete Recipe
+    ****************************************************/
     private async Task DeleteRecipe(Recipe recipe)
     {
         await httpClient.DeleteAsync($"api/recipe/{recipe.RecipeId}");
         recipes.Remove(recipe);
+    }
+
+    /***************************************************
+     * Search
+    ****************************************************/
+    private void Search()
+    {
+        model.SearchString = model.SearchString.ToLower();
+
+        List<Recipe> filteredRecipes = new();
+
+        // recipes = recipes.Where(r => r.Title.Contains(model.SearchString)
+        // || r.Description.Contains(model.SearchString)).ToList();
+
+        foreach(Recipe recipe in allRecipes)
+        {
+            if(recipe.Title.ToLower().Contains(model.SearchString) || recipe.Description.ToLower().Contains(model.SearchString)) {
+                filteredRecipes.Add(recipe);
+            }
+
+            foreach(RecipeIngredient ingredient in recipe.RecipeIngredients)
+            {
+                if (ingredient.Ingredient.ToLower().Contains(model.SearchString))
+                {
+                    filteredRecipes.Add(recipe);
+                }
+            }
+
+            foreach (RecipeInstruction instruction in recipe.RecipeInstructions)
+            {
+                if (instruction.Instruction.ToLower().Contains(model.SearchString))
+                {
+                    filteredRecipes.Add(recipe);
+                }
+            }
+        }
+
+        recipes = filteredRecipes.Distinct().ToList();
+
+        viewAll = false;
+    }
+
+    /***************************************************
+     * View All
+    ****************************************************/
+    private void ViewAll()
+    {
+        recipes = allRecipes;
+        viewAll = true;
+        model.SearchString = String.Empty;
+    }
+
+    /***************************************************
+     * Model
+    ****************************************************/
+    private class Model
+    {
+        public string SearchString { get; set; }
     }
 }
