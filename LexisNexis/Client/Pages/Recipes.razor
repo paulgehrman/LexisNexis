@@ -41,7 +41,7 @@
     {
         <div class="row pt-2">
             <div class="col-12">
-                <table class="table">
+                <table class="table" style="border-top:solid;">
                     <thead>
                         <tr>
                             <th>Title</th>
@@ -61,7 +61,7 @@
                                 <td>@recipe.Description</td>
                                 <td>
                                     @if(!String.IsNullOrEmpty(recipe.ImageName)) {
-                                        <button @onclick="() => ViewFile(recipe)" class="btn btn-md btn-link pl-0 ml-0" style="border:none;" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
+                                        <button @onclick="() => ViewFile(recipe)" class="btn btn-md btn-link pl-0 ml-0shadow-none" style="box-shadow:none; outline:none;" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
                                     }
                                 </td>
                                 <td>
