@@ -1,6 +1,7 @@
 ﻿@page "/recipes"
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+@inject IJSRuntime jsRuntime
 
 <div class="container">
     <div class="row">
@@ -57,7 +58,11 @@
                             <tr>
                                 <td>@recipe.Title</td>
                                 <td>@recipe.Description</td>
-                                <td>@recipe.ImageName</td>
+                                <td>
+                                    @if(!String.IsNullOrEmpty(recipe.ImageName)) {
+                                        <button @onclick="() => ViewFile(recipe.Image)" class="btn btn-md btn-link pl-0 ml-0" style="border:none;" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
+                                    }
+                                </td>
                                 <td>
                                     <ul>
                                         @foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
@@ -192,6 +197,26 @@
         recipes = allRecipes;
         viewAll = true;
         model.SearchString = String.Empty;
+    }
+
+    /**************************************************************
+     * View File
+    **************************************************************/
+    public async Task ViewFile(byte[] file)
+    {
+        try
+        {
+            // var fileType = Utility.GetMimeType(uploadedFile.FileName);
+            // await jsRuntime.InvokeVoidAsync("jsOpenIntoNewTab", httpResult.Data, uploadedFile.FileType);
+
+            string mimeType = "image/jpeg";
+            await jsRuntime.InvokeVoidAsync("openFileInNewTab", file, mimeType);
+        }
+
+        catch (Exception ex)
+        {
+            string errMsg = ex.Message;
+        }
     }
 
     /***************************************************

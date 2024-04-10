@@ -5,7 +5,11 @@ function highlightBorders(controls) {
     });
 }
 
-//function animate() {
-//    $("#box").animate(
-//        { left: '500px' });
-//}
+function openFileInNewTab(array, mimeType) {
+    let blob = new Blob([array], { type: mimeType });
+    let blobUrl = URL.createObjectURL(blob);
+   
+    window.open(blobUrl, '_blank');
+    //window.open("https://www.ford.com", '_blank');
+    URL.revokeObjectURL(blobUrl);
+}
