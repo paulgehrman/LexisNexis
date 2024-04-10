@@ -42,17 +42,19 @@
             <div class="col-6 border">
                 @if (recipe.RecipeIngredients is not null && recipe.RecipeIngredients.Count > 0)
                 {
+                    <ul>
                     @foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
                     {
                         <div class="row pt-2">
                             <div class="col-9">
-                                @ingredient.Ingredient
+                            <li>@ingredient.Ingredient</li>
                             </div>
                             <div class="col-2">
                                 <button @onclick="(() => RemoveIngredient(ingredient.RecipeIngredientId))" class="btn btn-sm btn-danger">Remove</button>
                             </div>
                         </div>
                     }
+                    </ul>
                 }
                 else
                 {
@@ -186,9 +188,19 @@
     /********************************************************
      * Add Instruction
     *********************************************************/
-    private void AddInstruction()
+    private async Task AddInstruction()
     {
+        var modal = Modal.Show<AddInstruction>();
+        var result = await modal.Result;
 
+        if (result.Confirmed)
+        {
+            string instruction = result.Data.ToString();
+            RecipeInstruction recipeInstruction = new();
+            recipeInstruction.Instruction = instruction;
+            recipeInstruction.RecipeId = recipe.RecipeId;
+            recipe.RecipeInstructions.Add(recipeInstruction);
+        }
     }
 
     /********************************************************

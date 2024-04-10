@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexisNexis.Server", "LexisNexis\Server\LexisNexis.Server.csproj", "{205D3763-530A-4967-94DD-F412C5036B9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexisNexis.Server", "LexisNexis\Server\LexisNexis.Server.csproj", "{205D3763-530A-4967-94DD-F412C5036B9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexisNexis.Client", "LexisNexis\Client\LexisNexis.Client.csproj", "{71A12404-1303-449B-804A-94DF0D4705AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexisNexis.Client", "LexisNexis\Client\LexisNexis.Client.csproj", "{71A12404-1303-449B-804A-94DF0D4705AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexisNexis.Shared", "LexisNexis\Shared\LexisNexis.Shared.csproj", "{DAEBE85E-ED7D-4B54-A3CF-42ECB9E4B269}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexisNexis.Shared", "LexisNexis\Shared\LexisNexis.Shared.csproj", "{DAEBE85E-ED7D-4B54-A3CF-42ECB9E4B269}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
