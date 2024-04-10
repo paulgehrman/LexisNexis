@@ -2,6 +2,7 @@
 @page "/addeditrecipe/{id:int}"
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+@inject IJSRuntime jsRuntime
 @using LexisNexis.Client.Components;
 
 <div class="container">
@@ -19,20 +20,38 @@
     </div>
 
     <EditForm Model="@recipe">
+        @if (validationMsgs.Count > 0)
+        {
+            @foreach (string msg in validationMsgs)
+            {
+                <div class="row pt-2">
+                    <div class="col-lg-11 offset-md-2" style="color:red;">&bull; @msg</div>
+                </div>
+            }
+        }
+
         <div class="row">
             <div class="col-2 text-end">
-                <label for="title" class="control-label">Title</label>
+                <label for="recipetitle" class="control-label">Title</label><sup><span style="color:red;">*</span></sup>
             </div>
             <div class="col-6">
-                <InputText id="title" @bind-Value="recipe.Title" class="form-control" />
+                <InputText id="recipetitle" @bind-Value="recipe.Title" class="form-control" />
             </div>
         </div>
         <div class="row pt-2">
             <div class="col-2 text-end">
-                <label for="title" class="control-label">Description</label>
+                <label for="recipedescription" class="control-label">Description</label><sup><span style="color:red;">*</span></sup>
             </div>
             <div class="col-6">
-                <InputTextArea id="description" @bind-Value="recipe.Description" rows="5" class="form-control" />
+                <InputTextArea id="recipedescription" @bind-Value="recipe.Description" rows="4" class="form-control" />
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-2 text-end">
+                <label for="image" class="control-label">Image</label>
+            </div>
+            <div class="col-6">
+            <InputFile accept="@acceptedDocTypes" />
             </div>
         </div>
         <div class="row pt-2">
@@ -43,63 +62,63 @@
                 @if (recipe.RecipeIngredients is not null && recipe.RecipeIngredients.Count > 0)
                 {
                     <ul>
-                    @foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
-                    {
-                        <div class="row pt-2">
-                            <div class="col-9">
+                        @foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
+                        {
+                            <div class="row pt-2">
+                                <div class="col-9">
                             <li>@ingredient.Ingredient</li>
-                            </div>
-                            <div class="col-2">
-                                <button @onclick="(() => RemoveIngredient(ingredient.RecipeIngredientId))" class="btn btn-sm btn-danger">Remove</button>
-                            </div>
-                        </div>
-                    }
-                    </ul>
+                    </div>
+                    <div class="col-2">
+                        <button @onclick="(() => RemoveIngredient(ingredient.RecipeIngredientId))" class="btn btn-sm btn-danger">Remove</button>
+                    </div>
+                </div>
+                        }
+            </ul>
                 }
                 else
                 {
-                    <span style="color:red;">No ingredients added.</span>
+            <span style="color:red;">No ingredients added.</span>
                 }
-            </div>
-            <div class="col-3">
-                <button @onclick="(() => AddIngredient())" class="btn btn-sm btn-primary">Add Ingredient</button>
-            </div>
+</div>
+<div class="col-3">
+    <button @onclick="(() => AddIngredient())" class="btn btn-sm btn-primary">Add Ingredient</button>
+</div>
         </div>
-        <div class="row pt-2">
-            <div class="col-2 text-end">
-                <label for="instructions" class="control-label">Instructions</label>
-            </div>
-            <div class="col-6 border">
+<div class="row pt-2">
+    <div class="col-2 text-end">
+        <label for="instructions" class="control-label">Instructions</label>
+    </div>
+    <div class="col-6 border">
                 @if (recipe.RecipeInstructions is not null && recipe.RecipeInstructions.Count > 0)
                 {
-                    <ul>
-                    @foreach (RecipeInstruction instruction in recipe.RecipeInstructions)
-                    {
-                        <div class="row pt-2">
-                            <div class="col-9">
-                                <li>@instruction.Instruction</li>
-                            </div>
-                            <div class="col-2">
-                                <button @onclick="(() => RemoveInstruction(instruction.RecipeInstructionId))" class="btn btn-sm btn-danger">Remove</button>
-                            </div>
-                        </div>
-                    }
-                    </ul>
+            <ul>
+                        @foreach (RecipeInstruction instruction in recipe.RecipeInstructions)
+                        {
+                    <div class="row pt-2">
+                        <div class="col-9">
+                    <li>@instruction.Instruction</li>
+            </div>
+            <div class="col-2">
+                <button @onclick="(() => RemoveInstruction(instruction.RecipeInstructionId))" class="btn btn-sm btn-danger">Remove</button>
+            </div>
+        </div>
+                        }
+                                </ul>
                 }
                 else
                 {
-                    <span style="color:red;">No instructions added.</span>
+    <span style="color:red;">No instructions added.</span>
                 }
             </div>
-            <div class="col-3">
-                <button @onclick="(() => AddInstruction())" class="btn btn-sm btn-primary">Add Instruction</button>
-            </div>
+<div class="col-3">
+    <button @onclick="(() => AddInstruction())" class="btn btn-sm btn-primary">Add Instruction</button>
+</div>
         </div>
-        <div class="row pt-2">
-            <div class="col-8 offset-2">
-                <button @onclick="SaveRecipe" class="btn btn-success">Save</button>
-            </div>
-        </div>
+<div class="row pt-2">
+    <div class="col-8 offset-2">
+        <button @onclick="SaveRecipe" class="btn btn-success">Save</button>
+    </div>
+</div>
     </EditForm>
 </div>
 
@@ -107,8 +126,11 @@
     [Parameter]
     public int? Id { get; set; }
 
-    private Recipe recipe = new();
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+    private Recipe recipe = new();
+    private List<string> validationMsgs = new();
+    private string acceptedDocTypes = String.Empty;
 
     /*********************************************************
      * On Parameters Set Async
@@ -117,16 +139,32 @@
     {
         try
         {
-            var result = await httpClient.GetFromJsonAsync<Recipe>($"api/recipe/{Id}");
-            if (result is not null)
+            if (Id is not null)
             {
-                recipe = result;
-                if (recipe.RecipeIngredients is null)
+                var result = await httpClient.GetFromJsonAsync<Recipe>($"api/recipe/{Id}");
+                if (result is not null)
                 {
-                    recipe.RecipeIngredients = new List<RecipeIngredient>();
+                    recipe = result;
+                    if (recipe.RecipeIngredients is null)
+                    {
+                        recipe.RecipeIngredients = new List<RecipeIngredient>();
+                    }
+                }
+                else
+                {
+                    recipe.Title = String.Empty;
+                    recipe.Description = String.Empty;
                 }
             }
+            else
+            {
+                recipe.Title = String.Empty;
+                recipe.Description = String.Empty;
+            }
+
+            acceptedDocTypes = ".jpg,.jpeg,.png,.gif,.tiff";
         }
+
         catch (Exception ex)
         {
             string errMsg = ex.Message;
@@ -208,6 +246,27 @@
     *********************************************************/
     private async Task SaveRecipe()
     {
+        validationMsgs.Clear();
+        List<string> controlsToHighlight = new();
+
+        if (recipe.Title.Trim().Length == 0)
+        {
+            validationMsgs.Add("Recipe title is required.");
+            controlsToHighlight.Add("recipetitle");
+        }
+
+        if (recipe.Description.Trim().Length == 0)
+        {
+            validationMsgs.Add("Recipe description is required.");
+            controlsToHighlight.Add("recipedescription");
+        }
+
+        if (validationMsgs.Count > 0)
+        {
+            await jsRuntime.InvokeVoidAsync("highlightBorders", controlsToHighlight);
+            return;
+        }
+
         if (Id is null)
         {
             await httpClient.PostAsJsonAsync("api/recipe", recipe);
