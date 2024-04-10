@@ -60,7 +60,7 @@
                                 <td>@recipe.Description</td>
                                 <td>
                                     @if(!String.IsNullOrEmpty(recipe.ImageName)) {
-                                        <button @onclick="() => ViewFile(recipe.Image)" class="btn btn-md btn-link pl-0 ml-0" style="border:none;" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
+                                        <button @onclick="() => ViewFile(recipe)" class="btn btn-md btn-link pl-0 ml-0" style="border:none;" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
                                     }
                                 </td>
                                 <td>
@@ -202,15 +202,14 @@
     /**************************************************************
      * View File
     **************************************************************/
-    public async Task ViewFile(byte[] file)
+    public async Task ViewFile(Recipe recipe)
     {
         try
         {
             // var fileType = Utility.GetMimeType(uploadedFile.FileName);
             // await jsRuntime.InvokeVoidAsync("jsOpenIntoNewTab", httpResult.Data, uploadedFile.FileType);
 
-            string mimeType = "image/jpeg";
-            await jsRuntime.InvokeVoidAsync("openFileInNewTab", file, mimeType);
+            await jsRuntime.InvokeVoidAsync("openFileInNewTab", recipe.Image, Utility.GetMimeType(recipe.ImageName));
         }
 
         catch (Exception ex)

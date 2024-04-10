@@ -214,7 +214,7 @@
         var modal = Modal.Show<AddIngredient>();
         var result = await modal.Result;
 
-        if (result.Confirmed)
+        if (result.Confirmed && result.Data.ToString().Trim().Length > 0)
         {
             string ingredient = result.Data.ToString();
             RecipeIngredient recipeIngredient = new();
