@@ -8,7 +8,7 @@
 <div class="container">
     <div class="row">
         <div class="col-4">
-            @if(viewAll)
+            @if (viewAll)
             {
                 <h3>All Recipes</h3>
             }
@@ -17,12 +17,16 @@
                 <h3>Recipes</h3>
             }
         </div>
-        <div class="col-2 text-end">
-            <InputText @bind-Value="model.SearchString" class="form-control" />
+        @if (recipes is not null && recipes.Count > 0)
+        {
+            <div class="col-2 text-end">
+                <InputText @bind-Value="model.SearchString" class="form-control" />
         </div>
-        <div class="col-1">
-            <button class="btn btn-sm btn-light" data-toggle="tooltip" title="Search" @onclick="() => Search()"><img src="/images/search-icon.png" height="20" alt="Search" /></button>
-        </div>
+            <div class="col-1">
+                <button class="btn btn-sm btn-light" data-toggle="tooltip" title="Search" @onclick="() => Search()"><img src="/images/search-icon.png" height="20" alt="Search" /></button>
+            </div>
+        }
+      
         @if (!viewAll)
         {
             <div class="col-2">
@@ -61,7 +65,8 @@
                                 <td>@recipe.Title</td>
                                 <td>@recipe.Description</td>
                                 <td>
-                                    @if(!String.IsNullOrEmpty(recipe.ImageName)) {
+                                    @if (!String.IsNullOrEmpty(recipe.ImageName))
+                                    {
                                         <button @onclick="() => ViewFile(recipe)" class="btn btn-md btn-link pl-0 ml-0shadow-none" style="box-shadow:none; outline:none;" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
                                     }
                                 </td>
@@ -82,13 +87,13 @@
                                     </ul>
                                 </td>
                                 <td>
-                                   @*  <button @onclick="(() => EditRecipe(recipe.RecipeId))" class="btn btn-sm btn-primary">Edit</button> *@
+                                    @*  <button @onclick="(() => EditRecipe(recipe.RecipeId))" class="btn btn-sm btn-primary">Edit</button> *@
                                     <button @onclick="() => EditRecipe(recipe.RecipeId)" class="btn btn-sm btn-outline-info" data-toggle="tooltip" title="Edit"><img src="/images/edit-icon.png" height="20" alt="edit" /></button>
-                                    </td>
+                                </td>
                                 <td>
-                                @*     <button @onclick="(() => DeleteRecipe(recipe))" class="btn btn-sm btn-danger">Delete</button> *@
+                                    @*     <button @onclick="(() => DeleteRecipe(recipe))" class="btn btn-sm btn-danger">Delete</button> *@
                                     <button @onclick="() => DeleteRecipe(recipe)" class="btn btn-sm btn-outline-danger" data-toggle="tooltip" title="Delete" style="margin-left:5px;"><img src="/images/trash.svg" height="16" alt="delete" /></button>
-                                    </td>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -98,7 +103,11 @@
     }
     else
     {
-        <span style="color:red;">No recipes found.</span>
+        <div class="row pt-3">
+            <div class="col-12">
+                <span style="color:red;">No recipes found. Click Add Recipe to add one.</span>
+            </div>
+        </div>
     }
 </div>
 
@@ -178,13 +187,14 @@
         // recipes = recipes.Where(r => r.Title.Contains(model.SearchString)
         // || r.Description.Contains(model.SearchString)).ToList();
 
-        foreach(Recipe recipe in allRecipes)
+        foreach (Recipe recipe in allRecipes)
         {
-            if(recipe.Title.ToLower().Contains(model.SearchString) || recipe.Description.ToLower().Contains(model.SearchString)) {
+            if (recipe.Title.ToLower().Contains(model.SearchString) || recipe.Description.ToLower().Contains(model.SearchString))
+            {
                 filteredRecipes.Add(recipe);
             }
 
-            foreach(RecipeIngredient ingredient in recipe.RecipeIngredients)
+            foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
             {
                 if (ingredient.Ingredient.ToLower().Contains(model.SearchString))
                 {

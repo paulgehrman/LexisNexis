@@ -25,36 +25,36 @@
             @foreach (string msg in validationMsgs)
             {
                 <div class="row pt-2">
-                    <div class="col-lg-11 offset-md-2" style="color:red;">&bull; @msg</div>
+                    <div class="col-lg-11 offset-1" style="color:red;">&bull; @msg</div>
                 </div>
             }
         }
 
         <div class="row">
-            <div class="col-2 text-end">
+            <div class="col-1 text-end">
                 <label for="recipetitle" class="control-label">Title</label><sup><span style="color:red;">*</span></sup>
             </div>
-            <div class="col-6">
+            <div class="col-7">
                 <InputText id="recipetitle" @bind-Value="recipe.Title" class="form-control" />
             </div>
         </div>
         <div class="row pt-2">
-            <div class="col-2 text-end">
+            <div class="col-1 text-end">
                 <label for="recipedescription" class="control-label">Description</label><sup><span style="color:red;">*</span></sup>
             </div>
-            <div class="col-6">
+            <div class="col-7">
                 <InputTextArea id="recipedescription" @bind-Value="recipe.Description" rows="4" class="form-control" />
             </div>
         </div>
         <div class="row pt-2">
-            <div class="col-2 text-end">
+            <div class="col-1 text-end">
                 <label for="image" class="control-label">Image</label>
             </div>
-            
-            @if (!String.IsNullOrEmpty(recipe.ImageName))
+
+            @if (recipe.Image is not null & !String.IsNullOrEmpty(recipe.ImageName))
             {
                 <div class="col-2">
-                <button @onclick="() => ViewFile(recipe)" class="btn btn-md btn-link pl-0 ml-0 shadow-none" style="box-shadow:none; outline:none;" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
+                    <button @onclick="() => ViewFile(recipe)" class="btn btn-md btn-link pl-0 ml-0 shadow-none" style="box-shadow:none; outline:none;" data-toggle="tooltip" title="View File">@recipe.ImageName</button>
                 </div>
             }
             <div class="col-4">
@@ -62,10 +62,10 @@
             </div>
         </div>
         <div class="row pt-2">
-            <div class="col-2 text-end">
+            <div class="col-1 text-end">
                 <label for="ingredients" class="control-label">Ingredients</label>
             </div>
-            <div class="col-6 border">
+            <div class="col-7 border">
                 @if (recipe.RecipeIngredients is not null && recipe.RecipeIngredients.Count > 0)
                 {
                     <ul>
@@ -76,7 +76,6 @@
                             <li>@ingredient.Ingredient</li>
                     </div>
                     <div class="col-2">
-                                    @*  <button @onclick="(() => RemoveIngredient(ingredient.RecipeIngredientId))" class="btn btn-sm btn-danger">Remove</button> *@
                         <button @onclick="() => RemoveIngredient(ingredient.RecipeIngredientId)" class="btn btn-sm btn-outline-danger" data-toggle="tooltip" title="Delete" style="margin-left:5px;"><img src="/images/trash.svg" height="16" alt="delete" /></button>
                     </div>
                 </div>
@@ -93,10 +92,10 @@
 </div>
         </div>
 <div class="row pt-2">
-    <div class="col-2 text-end">
+    <div class="col-1 text-end">
         <label for="instructions" class="control-label">Instructions</label>
     </div>
-    <div class="col-6 border">
+    <div class="col-7 border">
                 @if (recipe.RecipeInstructions is not null && recipe.RecipeInstructions.Count > 0)
                 {
             <ul>
@@ -112,7 +111,7 @@
             </div>
         </div>
                         }
-                                    </ul>
+                                            </ul>
                 }
                 else
                 {
@@ -344,5 +343,5 @@
     private void Cancel()
     {
         navManager.NavigateTo("/recipes");
-    } 
+    }
 }
