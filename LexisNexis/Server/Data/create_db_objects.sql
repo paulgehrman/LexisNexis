@@ -1,7 +1,10 @@
-﻿IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'LexisNexis')
+﻿IF EXISTS(SELECT * FROM sys.databases WHERE name = 'LexisNexis')
   BEGIN
-    CREATE DATABASE [LexisNexis]
+    DROP DATABASE [LexisNexis]
   END
+GO
+
+CREATE DATABASE [LexisNexis]
 GO
 
 USE [LexisNexis]
