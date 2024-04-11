@@ -295,17 +295,13 @@
     {
         try
         {
-            // var selectedFile = e.File;
+            //TODO max size config
 
             Stream stream = e.File.OpenReadStream(Convert.ToInt64(5242880));
             MemoryStream ms = new MemoryStream();
             await stream.CopyToAsync(ms);
             stream.Close();
 
-            //UploadedFile uploadedFile = new();
-            //uploadedFile.FileName = selectedFile.Name;
-            //uploadedFile.AzureContainer = String.Format("dependents");
-            //uploadedFile.FileContent = ms.ToArray();
             recipe.Image = ms.ToArray();
             recipe.ImageName = e.File.Name;
 
@@ -325,9 +321,6 @@
     {
         try
         {
-            // var fileType = Utility.GetMimeType(uploadedFile.FileName);
-            // await jsRuntime.InvokeVoidAsync("jsOpenIntoNewTab", httpResult.Data, uploadedFile.FileType);
-
             await jsRuntime.InvokeVoidAsync("openFileInNewTab", recipe.Image, Utility.GetMimeType(recipe.ImageName));
         }
 
