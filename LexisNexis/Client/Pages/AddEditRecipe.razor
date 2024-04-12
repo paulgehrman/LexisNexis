@@ -106,12 +106,11 @@
                     <li>@instruction.Instruction</li>
             </div>
             <div class="col-2">
-                                    @*  <button @onclick="(() => RemoveInstruction(instruction.RecipeInstructionId))" class="btn btn-sm btn-danger">Remove</button> *@
                 <button @onclick="() => RemoveIngredient(instruction.RecipeInstructionId)" class="btn btn-sm btn-outline-danger" data-toggle="tooltip" title="Delete" style="margin-left:5px;"><img src="/images/trash.svg" height="16" alt="delete" /></button>
             </div>
         </div>
                         }
-                                            </ul>
+                                                </ul>
                 }
                 else
                 {
@@ -156,21 +155,7 @@
                 if (result is not null)
                 {
                     recipe = result;
-                    if (recipe.RecipeIngredients is null)
-                    {
-                        recipe.RecipeIngredients = new List<RecipeIngredient>();
-                    }
                 }
-                else
-                {
-                    recipe.Title = String.Empty;
-                    recipe.Description = String.Empty;
-                }
-            }
-            else
-            {
-                recipe.Title = String.Empty;
-                recipe.Description = String.Empty;
             }
 
             acceptedDocTypes = ".jpg,.jpeg,.png,.gif,.tiff";

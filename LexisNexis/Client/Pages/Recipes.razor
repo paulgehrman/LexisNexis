@@ -179,39 +179,13 @@
     ****************************************************/
     private void Search()
     {
-        //TODO
         model.SearchString = model.SearchString.ToLower();
 
-        List<Recipe> filteredRecipes = new();
-
-        // recipes = recipes.Where(r => r.Title.Contains(model.SearchString)
-        // || r.Description.Contains(model.SearchString)).ToList();
-
-        foreach (Recipe recipe in allRecipes)
-        {
-            if (recipe.Title.ToLower().Contains(model.SearchString) || recipe.Description.ToLower().Contains(model.SearchString))
-            {
-                filteredRecipes.Add(recipe);
-            }
-
-            foreach (RecipeIngredient ingredient in recipe.RecipeIngredients)
-            {
-                if (ingredient.Ingredient.ToLower().Contains(model.SearchString))
-                {
-                    filteredRecipes.Add(recipe);
-                }
-            }
-
-            foreach (RecipeInstruction instruction in recipe.RecipeInstructions)
-            {
-                if (instruction.Instruction.ToLower().Contains(model.SearchString))
-                {
-                    filteredRecipes.Add(recipe);
-                }
-            }
-        }
-
-        recipes = filteredRecipes.Distinct().ToList();
+        recipes = allRecipes.Where(r => r.Title.ToLower().Contains(model.SearchString) 
+        || r.Description.ToLower().Contains(model.SearchString)
+        || r.RecipeIngredients.Any(i => i.Ingredient.ToLower().Contains(model.SearchString))
+        || r.RecipeInstructions.Any(i => i.Instruction.ToLower().Contains(model.SearchString))
+        ).ToList();
 
         viewAll = false;
     }
@@ -233,9 +207,6 @@
     {
         try
         {
-            // var fileType = Utility.GetMimeType(uploadedFile.FileName);
-            // await jsRuntime.InvokeVoidAsync("jsOpenIntoNewTab", httpResult.Data, uploadedFile.FileType);
-
             await jsRuntime.InvokeVoidAsync("openFileInNewTab", recipe.Image, Utility.GetMimeType(recipe.ImageName));
         }
 
