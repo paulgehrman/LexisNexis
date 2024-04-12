@@ -3,6 +3,7 @@
 @inject HttpClient httpClient
 @inject NavigationManager navManager
 @inject IJSRuntime jsRuntime
+@inject IConfiguration config
 @using LexisNexis.Client.Components;
 
 <div class="container">
@@ -24,7 +25,7 @@
         {
             @foreach (string msg in validationMsgs)
             {
-                <div class="row pt-2">
+                <div class="row pt-2 pb-2">
                     <div class="col-lg-11 offset-1" style="color:red;">&bull; @msg</div>
                 </div>
             }
@@ -277,7 +278,12 @@
     {
         try
         {
-            //TODO max size config
+            validationMsgs.Clear();
+            if (e.File.Size > Convert.ToInt64(config["MAXFILEUPLOADSIZE"]))
+            {
+                validationMsgs.Add("Unable to upload file. The file is too big.");
+                return;
+            }
 
             Stream stream = e.File.OpenReadStream(Convert.ToInt64(5242880));
             MemoryStream ms = new MemoryStream();
