@@ -10,5 +10,4 @@
         public List<RecipeIngredient>? RecipeIngredients { get; set; } = new();
         public List<RecipeInstruction>? RecipeInstructions { get; set; } = new();
     }
-    
 }
